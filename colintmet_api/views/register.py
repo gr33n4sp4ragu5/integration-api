@@ -4,6 +4,7 @@ from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from rest_framework import status
+from django.contrib.auth.hashers import make_password
 
 class Register(APIView):
     def post(self, request):
