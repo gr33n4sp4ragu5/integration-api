@@ -22,7 +22,7 @@ class Register(APIView):
 
                 new_user = User()
                 new_user.email = email
-                new_user.password = password
+                new_user.password = make_password(password)
 
                 new_user.save()
                 return Response({"status": "Success"}, status = status.HTTP_201_CREATED)
