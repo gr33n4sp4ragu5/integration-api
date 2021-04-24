@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
-from . import utils
+from colintmet_api import utils
 
 class Login(APIView):
     authentication_classes = (BasicAuthentication,)
