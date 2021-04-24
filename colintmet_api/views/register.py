@@ -23,6 +23,7 @@ class Register(APIView):
 
                 new_user = User()
                 new_user.email = email
+                new_user.username = email
                 new_user.password = make_password(password)
 
                 new_user.save()
