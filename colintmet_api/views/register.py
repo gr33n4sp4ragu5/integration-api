@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from rest_framework import status
 from django.contrib.auth.hashers import make_password
+from colintmet_api.db_connector import *
 
 class Register(APIView):
     def post(self, request):
@@ -27,6 +28,13 @@ class Register(APIView):
                 new_user.password = make_password(password)
 
                 new_user.save()
+                try:
+                    db_connection = establish_db_connection(colintmet_api.db_connector.URL, 'colintmet_db')
+                    insert_new_user(db_connection, data)
+                except Exceptions as exp:
+                    print("Unexpected exception occurred: "+str(exp))
+                    return Response({"error": "An error occurred while trying to write in mongodb"},
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 return Response({"status": "Success"}, status = status.HTTP_201_CREATED)
             else:
                 return Response({"error": "Required param(s) missing, Please include and retry again"},
