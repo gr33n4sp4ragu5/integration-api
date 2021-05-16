@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from rest_framework import status
 from django.contrib.auth.hashers import make_password
 from colintmet_api.db_connector import *
+import logging
 
 class Register(APIView):
     def post(self, request):
@@ -29,13 +30,16 @@ class Register(APIView):
 
                 new_user.save()
                 try:
-                    db_connection = establish_db_connection(colintmet_api.db_connector.URL, 'colintmet_db')
-                    insert_new_user(db_connection, data)
-                except Exceptions as exp:
+                    logging.info("I just created the user")
+                    logging.info(data)
+                    db_connection = establish_db_connection('some-mongo', 'colintmet-db')
+                    inserted_user = insert_new_user(db_connection, data)
+                    return Response({"status": [data, inserted_user]}, status = status.HTTP_201_CREATED)
+                except Exception as exp:
                     print("Unexpected exception occurred: "+str(exp))
                     return Response({"error": "An error occurred while trying to write in mongodb"},
                             status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-                return Response({"status": "Success"}, status = status.HTTP_201_CREATED)
+                return Response({"status": "Succede que no recarga"}, status = status.HTTP_201_CREATED)
             else:
                 return Response({"error": "Required param(s) missing, Please include and retry again"},
                                 status=status.HTTP_400_BAD_REQUEST)
