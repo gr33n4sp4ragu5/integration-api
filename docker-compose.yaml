@@ -5,7 +5,7 @@ volumes:
     external: True
   sqlite-django:
     external: True
-networks:                                                                       
+networks:
   colintmet-net:
     external:
       name: colintmet-net
@@ -16,12 +16,12 @@ services:
 
   django-rest-api:
     build: .
-    networks:                                                                   
+    networks:
       - colintmet-net
     ports:
       - 8000:8000
     volumes:
-      - sqlite-django:/app/
+      - sqlite-django:/app/sqlite
 
   mongo:
     image: mongo
