@@ -2,9 +2,9 @@ from pymongo import MongoClient
 import logging
 
 
-def establish_db_connection(url, database_name):
+def establish_db_connection(database_url, database_port, database_name):
     try:
-        client = MongoClient('some-mongo', 27017, username='root', password='example')
+        client = MongoClient(database_url, database_port, username='root', password='example')
         return client[database_name]
     except Exception as error:
         logging.error("Couldn't update database. Error:\n%s", error)

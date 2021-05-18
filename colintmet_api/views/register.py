@@ -8,6 +8,10 @@ from django.contrib.auth.hashers import make_password
 from colintmet_api.db_connector import *
 import logging
 
+DATABASE_NAME = 'colintmet-db'
+DATABASE_URL = 'some-mongo'
+DATABASE_PORT = 27017
+
 class Register(APIView):
     def post(self, request):
         required_params = ['email', 'password', 'name', 'surnames', 'birthdate', 'gender']
@@ -32,7 +36,7 @@ class Register(APIView):
                 try:
                     logging.info("I just created the user")
                     logging.info(data)
-                    db_connection = establish_db_connection('some-mongo', 'colintmet-db')
+                    db_connection = establish_db_connection(DATABASE_URL, DATABASE_PORT, DATABASE_NAME)
                     insert_new_user(db_connection, data)
                     return Response({"status": "Successfully registered"}, status = status.HTTP_201_CREATED)
                 except Exception as exp:
