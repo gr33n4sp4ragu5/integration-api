@@ -25,7 +25,7 @@ class Register(APIView):
                         required_params[1], data[required_params[1]])
                 except ValidationError as err:
                     return Response(
-                        {"error": str(err.messages[0])}, status = status.HTTP_404_BAD_REQUEST)
+                        {"error": str(err.messages[0])}, status = status.HTTP_400_BAD_REQUEST)
 
                 new_user = User()
                 new_user.email = email
@@ -34,8 +34,6 @@ class Register(APIView):
 
                 new_user.save()
                 try:
-                    logging.info("I just created the user")
-                    logging.info(data)
                     db_connection = establish_db_connection(DATABASE_URL, DATABASE_PORT, DATABASE_NAME)
                     insert_new_user(db_connection, data)
                     return Response({"status": "Successfully registered"}, status = status.HTTP_201_CREATED)
@@ -43,7 +41,6 @@ class Register(APIView):
                     print("Unexpected exception occurred: "+str(exp))
                     return Response({"error": "An error occurred while trying to write in mongodb"},
                             status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-                return Response({"status": "Succede que no recarga"}, status = status.HTTP_201_CREATED)
             else:
                 return Response({"error": "Required param(s) missing, Please include and retry again"},
                                 status=status.HTTP_400_BAD_REQUEST)
