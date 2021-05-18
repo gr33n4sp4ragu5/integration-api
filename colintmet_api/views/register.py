@@ -33,8 +33,8 @@ class Register(APIView):
                     logging.info("I just created the user")
                     logging.info(data)
                     db_connection = establish_db_connection('some-mongo', 'colintmet-db')
-                    inserted_user = insert_new_user(db_connection, data)
-                    return Response({"status": [data, inserted_user]}, status = status.HTTP_201_CREATED)
+                    insert_new_user(db_connection, data)
+                    return Response({"status": "Successfully registered"}, status = status.HTTP_201_CREATED)
                 except Exception as exp:
                     print("Unexpected exception occurred: "+str(exp))
                     return Response({"error": "An error occurred while trying to write in mongodb"},
