@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-yia_dicnqv1da8z-r!o=447a-c7q^djv#e4zs764fat_#&%zm8
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.56.101']
+ALLOWED_HOSTS = ['192.168.56.101', '138.4.110.213']
 
 
 # Application definition
@@ -77,7 +77,7 @@ WSGI_APPLICATION = 'colintmet_api.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': str(BASE_DIR / 'db.sqlite3'),
+        'NAME': str(BASE_DIR / 'sqlite/db.sqlite3'),
     }
 }
 

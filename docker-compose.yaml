@@ -1,10 +1,11 @@
-
 version: '3.1'
 
 volumes:
+  colintmet-mongo-db:
+    external: True
   sqlite-django:
     external: True
-networks:                                                                       
+networks:
   colintmet-net:
     external:
       name: colintmet-net
@@ -15,10 +16,36 @@ services:
 
   django-rest-api:
     build: .
-    networks:                                                                   
+    networks:
       - colintmet-net
     ports:
       - 8000:8000
     volumes:
-      - sqlite-django:/app/
+      - sqlite-django:/app/sqlite
+
+  mongo:
+    image: mongo
+    container_name: some-mongo
+    restart: always
+    networks:
+      - colintmet-net
+    volumes:
+      - colintmet-mongo-db:/data/db
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    networks:
+      - colintmet-net
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: example
+
 
