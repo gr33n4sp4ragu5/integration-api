@@ -27,11 +27,11 @@ def serialize_user(user):
             'surnames': user['surnames']}
 
 
-def insert_survey_response(db_connection, survey_response):
+def insert_survey_response(db_connection, survey_response, username):
     surveys_response_collection = db_connection['surveys-response']
     try:
         surveys_response_collection.insert_one(
-            serialize_survey_response(survey_response))
+            serialize_survey_response(survey_response, username))
     except Exception as error:
         logging.error("Couldn't update database. Error:\n%s", error)
         raise Exception(f"""Error trying to insert survey response
@@ -39,5 +39,5 @@ def insert_survey_response(db_connection, survey_response):
                             and error is:\n {error}""")
 
 
-def serialize_survey_response(survey_response):
-    return survey_response
+def serialize_survey_response(survey_response, username):
+    return {'user': username, 'survey_response': survey_response}
