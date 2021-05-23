@@ -1,5 +1,7 @@
 from pymongo import MongoClient
 import logging
+import datetime
+import copy
 
 
 def establish_db_connection(database_url, database_port, database_name):
@@ -40,4 +42,9 @@ def insert_survey_response(db_connection, survey_response, username):
 
 
 def serialize_survey_response(survey_response, username):
-    return {'user': username, 'survey_response': survey_response}
+    question_ids = survey_response['survey']['results'].keys()
+    raw_results = survey_response['survey']['results']
+    results = [{'answer': raw_results[question_id]['results']['answer'],
+               'question_id': question_id} for question_id in question_ids]
+
+    return {'user': username, 'results': results}
