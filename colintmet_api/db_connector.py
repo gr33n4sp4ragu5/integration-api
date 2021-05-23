@@ -40,6 +40,6 @@ def insert_survey_response(db_connection, survey_response, username):
 
 
 def serialize_survey_response(survey_response, username):
-    results = survey_response['survey']['results']['results']
+    results = survey_response['survey']['results']['questionStep0ID']['results']
     survey_id = survey_response['survey']['identifier']
     return {'user': username, 'results': results, 'id': survey_id, 'survey_raw': survey_response}
