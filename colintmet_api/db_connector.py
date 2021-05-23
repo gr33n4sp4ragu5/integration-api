@@ -41,7 +41,8 @@ def insert_survey_response(db_connection, survey_response, username):
 
 def serialize_survey_response(survey_response, username):
     question_ids = survey_response['survey']['results'].keys()
-    real_results = [survey_response['survey']['results'][question_id] for question_id in question_ids]
-    results = survey_response['survey']['results']['questionStep0ID']['results']
+    results = [survey_response['survey']['results'][question_id]['results'] for question_id in question_ids]
+    start_date_time = survey_response['start_date']
+    end_date_time = survey_response['end_date']
     survey_id = survey_response['survey']['identifier']
-    return {'user': username, 'results': results, 'id': survey_id, 'survey_raw': survey_response, 'real_results': real_results}
+    return {'user': username, 'results': results, 'id': survey_id, 'start_date_time': start_date_time, 'end_date_time': end_date_time}
