@@ -20,7 +20,7 @@ class PostSurveyAnswer(APIView):
         survey_response = data
         try:
             db_connection = establish_db_connection(DATABASE_URL, DATABASE_PORT, DATABASE_NAME)
-            insert_survey_response(db_connection, survey_response, request.user.username)
+            insert_survey_response(db_connection, survey_response, request.user.id)
             return Response({"status": "Successfully added survey answer"}, status = status.HTTP_201_CREATED)
         except Exception as error:
             logging.error("Error while adding survey response. Error is \n %s", error)
