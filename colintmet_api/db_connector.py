@@ -43,77 +43,8 @@ def insert_survey_response(db_connection, survey_response, username):
 
 def serialize_survey_response(survey_response, username):
     question_ids = survey_response['survey']['results'].keys()
-    anwers = [survey_response['survey']['results'][question_id]['results']['answer'] for question_id in question_ids]
-    complete_results = add_question_id(results, question_ids)
-    start_date_time = datetime.datetime.strptime(
-        survey_response['survey']['start_date'], '%Y-%m-%dT%H:%M:%S.%f')
-    end_date_time = datetime.datetime.strptime(
-        survey_response['survey']['end_date'], '%Y-%m-%dT%H:%M:%S.%f')
-    survey_id = survey_response['survey']['identifier']
-    return {'user': username, 'results': results, 'id': survey_id,
-            'start_date_time': start_date_time, 'end_date_time': end_date_time,
-            'complete_results': complete_results}
-
-def add_question_id(results, question_ids):
-    enhanced_results = copy.deepcopy(results)
-    i = 0
-    for question_id in question_ids:
-        enhanced_results[i]['question_id'] = question_id
-        i+=1
-    return enhanced_results
-
-
-def funcion(survey_response):
-    question_ids = survey_response['survey']['results'].keys()
-    foo = survey_response['survey']['results']
-    result = [{'answer': foo[question_id]['results']['answer'],
+    raw_results = survey_response['survey']['results']
+    results = [{'answer': raw_results[question_id]['results']['answer'],
                'question_id': question_id} for question_id in question_ids]
-    return result
 
-
-mySurvey = {'survey': {
-            'identifier': 'surveyTaskID',
-            'start_date': '2021-05-23T18:50:20.437637',
-            'end_date': '2021-05-23T18:50:30.730096',
-            'results': {
-                'questionStep0ID': {
-                    'identifier': 'questionStep0ID',
-                    'start_date': '2021-05-23T18:50:21.936131',
-                    'end_date': '2021-05-23T18:50:23.031372',
-                    'question_title': '¿Qué palabra define mejor esta expresión?',
-                    'answer_format': {
-                        'question_type': 'SingleChoice',
-                        'answer_style': 'SingleChoice',
-                        'choices': [
-                            {
-                                'text': 'Envidioso',
-                                'value': 3
-                            },
-                            {
-                                'text': 'Aterrado',
-                                'value': 2
-                            },
-                            {
-                                'text': 'Arrogante',
-                                'value': 1
-                            },
-                            {
-                                'text': 'Odioso',
-                                'value': 0
-                            }
-                        ]
-                    },
-                    'results': {
-                        'answer': [
-                            {
-                                'text': 'Envidioso',
-                                'value': 3
-                            }
-                        ]
-                    }
-                }
-            }
-}}
-
-#print(serialize_survey_response(mySurvey, 'alberto@gmail.com'))
-print(funcion(mySurvey))
+    return {'user': username, 'results': results}
