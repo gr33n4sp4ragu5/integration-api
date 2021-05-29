@@ -48,3 +48,19 @@ def serialize_survey_response(survey_response, user_id):
                'question_id': question_id} for question_id in question_ids]
 
     return {'user': user_id, 'results': results}
+
+
+def insert_physiological_data(db_connection, physiological_data, user_id):
+    physiological_data_collection = db_connection['physiological-data']
+    try:
+        physiological_data_collection.insert_one(
+            serialize_physiological_data(physiological_data, user_id))
+    except Exception as error:
+        logging.error("Couldn't update database. Error:\n%s", error)
+        raise Exception(f"""Error trying to insert physiological data
+                            {physiological_data} of type {type(physiological_data)}
+                            and error is:\n {error}""")
+
+
+def serialize_physiological_data(physiological_data, user_id):
+    return {'user': user_id, 'data': physiological_data}
