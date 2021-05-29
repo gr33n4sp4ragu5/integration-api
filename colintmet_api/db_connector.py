@@ -1,5 +1,7 @@
 from pymongo import MongoClient
 import logging
+import datetime
+import copy
 
 
 def establish_db_connection(database_url, database_port, database_name):
@@ -25,3 +27,24 @@ def serialize_user(user):
     return {'email': user['email'], 'gender': user['gender'],
             'birthdate': user['birthdate'], 'name': user['name'],
             'surnames': user['surnames']}
+
+
+def insert_survey_response(db_connection, survey_response, user_id):
+    surveys_response_collection = db_connection['surveys-response']
+    try:
+        surveys_response_collection.insert_one(
+            serialize_survey_response(survey_response, user_id))
+    except Exception as error:
+        logging.error("Couldn't update database. Error:\n%s", error)
+        raise Exception(f"""Error trying to insert survey response
+                            {survey_response} of type {type(survey_response)}
+                            and error is:\n {error}""")
+
+
+def serialize_survey_response(survey_response, user_id):
+    question_ids = survey_response['survey']['results'].keys()
+    raw_results = survey_response['survey']['results']
+    results = [{'answer': raw_results[question_id]['results']['answer'],
+               'question_id': question_id} for question_id in question_ids]
+
+    return {'user': user_id, 'results': results}
