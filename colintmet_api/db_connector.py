@@ -41,13 +41,33 @@ def insert_survey_response(db_connection, survey_response, user_id):
                             and error is:\n {error}""")
 
 
-def serialize_survey_response(survey_response, user_id):
+def serialize_survey_response2(survey_response, user_id):
     question_ids = survey_response['survey']['results'].keys()
     raw_results = survey_response['survey']['results']
     results = [{'answer': raw_results[question_id]['results']['answer'],
                'question_id': question_id} for question_id in question_ids]
 
     return {'user': user_id, 'results': results}
+
+def serialize_survey_response(survey_response, user_id):
+    question_ids = survey_response['survey']['results'].keys()
+    raw_results = survey_response['survey']['results']
+    simple_question_ids = list(filter(lambda question_id: raw_results[question_id]['results'].get('answer') is not None, question_ids))
+    form_ids = list(filter(lambda question_id: raw_results[question_id]['results'].get('answer') is None, question_ids))
+    question_results = serialize_simple_questions(raw_results, simple_question_ids)
+    forms_results = serialize_forms(raw_results, form_ids) if form_ids else []
+
+    return {'user': user_id, 'form_ids': forms_results, 'questions': question_results}
+
+def serialize_simple_questions(raw_results, question_ids):
+    results = [{'answer': raw_results[question_id]['results']['answer'],
+               'question_id': question_id} for question_id in question_ids]
+    return results
+
+def serialize_forms(raw_results, form_ids):
+    results = {'form_id': "blah", 'form_title': "blih", 'results': "funcion seguramente"}
+    return results
+
 
 
 def insert_physiological_data(db_connection, physiological_data, user_id):
