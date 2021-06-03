@@ -49,19 +49,27 @@ def serialize_survey_response2(survey_response, user_id):
 
     return {'user': user_id, 'results': results}
 
+
 def serialize_survey_response(survey_response, user_id):
     raw_results = survey_response['survey']['results']
     question_ids = raw_results.keys()
-    form_ids = list(filter(lambda question_id: raw_results[question_id]['results'].get('answer') is None, question_ids))
+    form_ids = list(filter(
+        lambda question_id: raw_results[question_id]['results'].get('answer')
+        is None, question_ids))
     question_results = serialize_final_questions(raw_results)
     forms_results = serialize_forms(raw_results, form_ids) if form_ids else []
 
-    return {'user': user_id, 'forms': forms_results, 'questions': question_results}
+    return {'user': user_id, 'forms': forms_results,
+            'questions': question_results}
+
 
 def serialize_final_questions(raw_results):
     question_ids = raw_results.keys()
-    simple_question_ids = list(filter(lambda question_id: raw_results[question_id]['results'].get('answer') is not None, question_ids))
-    question_results = serialize_simple_questions(raw_results, simple_question_ids)
+    simple_question_ids = list(filter(
+        lambda question_id: raw_results[question_id]['results'].get('answer')
+        is not None, question_ids))
+    question_results = serialize_simple_questions(
+        raw_results, simple_question_ids)
     return question_results
 
 
@@ -70,11 +78,14 @@ def serialize_simple_questions(raw_results, question_ids):
                'question_id': question_id} for question_id in question_ids]
     return results
 
+
 def serialize_forms(raw_results, form_ids):
-
-    results = [{'form_id': raw_results[form_id]['identifier'], 'form_title': raw_results[form_id]['question_title'], 'results': serialize_final_questions(raw_results[form_id]['results'])} for form_id in form_ids]
+    results = [{
+        'form_id': raw_results[form_id]['identifier'],
+        'form_title': raw_results[form_id]['question_title'],
+        'results': serialize_final_questions(raw_results[form_id]['results'])}
+        for form_id in form_ids]
     return results
-
 
 
 def insert_physiological_data(db_connection, physiological_data, user_id):
