@@ -1,7 +1,6 @@
 from pymongo import MongoClient
 import logging
 import datetime
-import copy
 
 
 def establish_db_connection(database_url, database_port, database_name):
