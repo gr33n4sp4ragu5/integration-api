@@ -41,15 +41,6 @@ def insert_survey_response(db_connection, survey_response, user_id):
                             and error is:\n {error}""")
 
 
-def serialize_survey_response2(survey_response, user_id):
-    question_ids = survey_response['survey']['results'].keys()
-    raw_results = survey_response['survey']['results']
-    results = [{'answer': raw_results[question_id]['results']['answer'],
-               'question_id': question_id} for question_id in question_ids]
-
-    return {'user': user_id, 'results': results}
-
-
 def serialize_survey_response(survey_response, user_id):
     raw_results = survey_response['survey']['results']
     question_ids = raw_results.keys()
