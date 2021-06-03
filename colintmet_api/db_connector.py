@@ -49,8 +49,16 @@ def serialize_survey_response(survey_response, user_id):
         is None, question_ids))
     question_results = serialize_final_questions(raw_results)
     forms_results = serialize_forms(raw_results, form_ids) if form_ids else []
+    start_date_time = datetime.datetime.strptime(
+        survey_response['survey']['start_date'], '%Y-%m-%dT%H:%M:%S.%f')
+    end_date_time = datetime.datetime.strptime(
+        survey_response['survey']['end_date'], '%Y-%m-%dT%H:%M:%S.%f')
 
-    return {'user': user_id, 'forms': forms_results,
+    survey_id = survey_response['survey']['identifier']
+
+    return {'id': survey_id, 'start_date_time': start_date_time,
+            'end_date_time': end_date_time, 'user': user_id,
+            'forms': forms_results,
             'questions': question_results}
 
 
