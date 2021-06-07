@@ -72,7 +72,7 @@ def serialize_final_questions(raw_results):
 
 
 def serialize_simple_questions(raw_results, question_ids):
-    results = [{'answer': raw_results[question_id]['results']['answer'],
+    results = [{'answer':raw_results[question_id]['results']['answer'][0]['value'] if raw_results[question_id]['answer_format'].get('answer_style') == 'SingleChoice' else raw_results[question_id]['results']['answer'],
                'question_id': question_id} for question_id in question_ids]
     return results
 
