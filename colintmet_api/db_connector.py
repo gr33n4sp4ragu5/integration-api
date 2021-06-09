@@ -118,3 +118,11 @@ def serialize_profile_response(profile):
     return {'email': profile['email'], 'name': profile['name'],
             'surnames': profile['surnames'],
             'birthdate': profile['birthdate'], 'gender': profile['gender']}
+
+
+def modify_profile_data(db_connection, user_email, modified_data):
+    profile_collection = db_connection['users']
+    result = profile_collection.update_one(
+        {'email': user_email}, {'$set': modified_data})
+
+    return result.modified_count == 1
