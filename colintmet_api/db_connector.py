@@ -100,3 +100,13 @@ def insert_physiological_data(db_connection, physiological_data, user_id):
 
 def serialize_physiological_data(physiological_data, user_id):
     return {'user': user_id, 'data': physiological_data}
+
+
+def get_profile_data(db_connection, user_email):
+    profile_collection = db_connection['users']
+    profile_data = profile_collection.find({"email": user_email})
+    return serialize_profile_response(profile_data[0])
+
+def serialize_profile_response(profile):
+    return {'email': profile['email'], 'name': profile['name'], 'surnames': profile['surnames'],
+    'birthdate': profile['birthdate'], 'gender': profile['gender']}

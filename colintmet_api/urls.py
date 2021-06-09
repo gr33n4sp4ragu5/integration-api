@@ -24,4 +24,5 @@ urlpatterns = [
     path('login/refresh', views.LoginRefresh.as_view()),
     path('surveys/answer', views.PostSurveyAnswer.as_view()),
     path('physiological/data', views.PostPhysiologicalData.as_view()),
+    path('profile/data', views.Profile.as_view()),
 ]
