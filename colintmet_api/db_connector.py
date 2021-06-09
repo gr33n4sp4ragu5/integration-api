@@ -5,11 +5,14 @@ import datetime
 
 def establish_db_connection(database_url, database_port, database_name):
     try:
-        client = MongoClient(database_url, database_port, username='root', password='example')
+        client = MongoClient(database_url, database_port,
+                             username='root', password='example')
         return client[database_name]
     except Exception as error:
         logging.error("Couldn't update database. Error:\n%s", error)
-        raise Exception("It failed trying to get the connection to the mongo db")
+        raise Exception(
+            """It failed trying to get the
+            connection to the mongo db""") from error
 
 
 def insert_new_user(db_connection, user):
@@ -19,7 +22,9 @@ def insert_new_user(db_connection, user):
 
     except Exception as error:
         logging.error("Couldn't update database. Error:\n%s", error)
-        raise Exception(f"""Error trying to insert user {user} and error is {error}""")
+        raise Exception(
+            f"""Error trying to insert user {user}
+            and error is {error}""") from error
 
 
 def serialize_user(user):
@@ -37,7 +42,7 @@ def insert_survey_response(db_connection, survey_response, user_id):
         logging.error("Couldn't update database. Error:\n%s", error)
         raise Exception(f"""Error trying to insert survey response
                             {survey_response} of type {type(survey_response)}
-                            and error is:\n {error}""")
+                            and error is:\n {error}""") from error
 
 
 def serialize_survey_response(survey_response, user_id):
@@ -93,9 +98,10 @@ def insert_physiological_data(db_connection, physiological_data, user_id):
             serialize_physiological_data(physiological_data, user_id))
     except Exception as error:
         logging.error("Couldn't update database. Error:\n%s", error)
-        raise Exception(f"""Error trying to insert physiological data
-                            {physiological_data} of type {type(physiological_data)}
-                            and error is:\n {error}""")
+        raise Exception(
+            f"""Error trying to insert physiological data
+                {physiological_data} of type {type(physiological_data)}
+                and error is:\n {error}""") from error
 
 
 def serialize_physiological_data(physiological_data, user_id):
@@ -107,6 +113,8 @@ def get_profile_data(db_connection, user_email):
     profile_data = profile_collection.find({"email": user_email})
     return serialize_profile_response(profile_data[0])
 
+
 def serialize_profile_response(profile):
-    return {'email': profile['email'], 'name': profile['name'], 'surnames': profile['surnames'],
-    'birthdate': profile['birthdate'], 'gender': profile['gender']}
+    return {'email': profile['email'], 'name': profile['name'],
+            'surnames': profile['surnames'],
+            'birthdate': profile['birthdate'], 'gender': profile['gender']}
