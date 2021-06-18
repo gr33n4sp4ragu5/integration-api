@@ -33,11 +33,18 @@ def serialize_user(user):
             'surnames': user['surnames']}
 
 
-def insert_survey_response(db_connection, survey_response, user_id):
+def insert_survey_response(db_connection, survey_response, user_id, user_email):
     surveys_response_collection = db_connection['surveys-response']
+    users_collection = db_connection['users']
     try:
         surveys_response_collection.insert_one(
             serialize_survey_response(survey_response, user_id))
+        users_collection.update(
+            {'email': user_email},
+            {'$push': {
+                'finished_surveys': survey_response['survey']['identifier']
+            }}
+        )
     except Exception as error:
         logging.error("Couldn't update database. Error:\n%s", error)
         raise Exception(f"""Error trying to insert survey response

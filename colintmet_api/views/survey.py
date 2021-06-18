@@ -25,7 +25,7 @@ class PostSurveyAnswer(APIView):
             db_connection = establish_db_connection(
                 DATABASE_URL, DATABASE_PORT, DATABASE_NAME)
             insert_survey_response(
-                db_connection, survey_response, request.user.id)
+                db_connection, survey_response, request.user.id, request.user.email)
             return Response(
                 {"status": "Successfully added survey answer"},
                 status=status.HTTP_201_CREATED)
