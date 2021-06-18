@@ -126,3 +126,20 @@ def modify_profile_data(db_connection, user_email, modified_data):
         {'email': user_email}, {'$set': modified_data})
 
     return result.modified_count == 1
+
+
+def get_finished_surveys(db_connection, user_email):
+    user_collection = db_connection['users']
+    user_data = user_collection.find({"email": user_email})
+    return serialize_finished_surveys_response(user_data[0])
+
+
+def serialize_finished_surveys_response(user_data):
+    logging.info(user_data)
+    logging.info("resultado")
+    resul = {'finished_surveys': user_data["finished_surveys"]
+                 if user_data.get("finished_surveys") else []}
+    logging.info(resul)
+    return {'finished_surveys': user_data["finished_surveys"]
+                if user_data.get("finished_surveys") else []}
+
