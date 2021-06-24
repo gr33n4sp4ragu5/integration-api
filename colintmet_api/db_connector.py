@@ -133,7 +133,7 @@ def insert_physiological_data(db_connection, physiological_data,
         max_date = [datetime.datetime(1900, 1, 1)]
         physiological_data_collection.insert_one(
             serialize_physiological_data(physiological_data, user_id, max_date))
-        updated = {"latest_physiological_upload": datetime.datetime.now()}
+        updated = {"latest_physiological_upload": max_date[0]}
         users_collection.update_one(
         {'email': user_email}, {'$set': updated})
     except Exception as error:
