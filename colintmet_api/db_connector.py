@@ -145,7 +145,7 @@ def insert_physiological_data(db_connection, physiological_data,
 
 
 def serialize_physiological_data(physiological_data, user_id, max_date):
-    raw_data = physiological_data["data"]["formatted_result"]
+    raw_data = physiological_data["formatted_result"]
 
     formatted_data = [format_raw_data(data, max_date) for data in raw_data]
 
