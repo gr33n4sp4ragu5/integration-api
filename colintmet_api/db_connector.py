@@ -174,7 +174,8 @@ def get_profile_data(db_connection, user_email):
 def serialize_profile_response(profile):
     return {'email': profile['email'], 'name': profile['name'],
             'surnames': profile['surnames'],
-            'birthdate': profile['birthdate'], 'gender': profile['gender']}
+            'birthdate': profile['birthdate'], 'gender': profile['gender'],
+            'latest_physiological_upload': profile['latest_physiological_upload']}
 
 
 def modify_profile_data(db_connection, user_email, modified_data):
