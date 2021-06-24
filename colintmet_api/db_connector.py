@@ -28,9 +28,11 @@ def insert_new_user(db_connection, user):
 
 
 def serialize_user(user):
+    latest_physiological_upload = datetime.datetime.now()
     return {'email': user['email'], 'gender': user['gender'],
             'birthdate': user['birthdate'], 'name': user['name'],
-            'surnames': user['surnames']}
+            'surnames': user['surnames'],
+            'latest_physiological_upload': latest_physiological_upload}
 
 
 def insert_survey_response(db_connection, survey_response, user_id, user_email):
@@ -123,11 +125,16 @@ def serialize_forms(raw_results, form_ids):
     return results
 
 
-def insert_physiological_data(db_connection, physiological_data, user_id):
+def insert_physiological_data(db_connection, physiological_data,
+                              user_id, user_email):
     physiological_data_collection = db_connection['physiological-data']
+    users_collection = db_connection['users']
     try:
         physiological_data_collection.insert_one(
             serialize_physiological_data(physiological_data, user_id))
+        updated = {"latest_physiological_upload": datetime.datetime.now()}
+        users_collection.update_one(
+        {'email': user_email}, {'$set': updated})
     except Exception as error:
         logging.error("Couldn't update database. Error:\n%s", error)
         raise Exception(

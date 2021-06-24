@@ -24,7 +24,8 @@ class PostPhysiologicalData(APIView):
             db_connection = establish_db_connection(
                 DATABASE_URL, DATABASE_PORT, DATABASE_NAME)
             insert_physiological_data(
-                db_connection, physiological_data, request.user.id)
+                db_connection, physiological_data, request.user.id,
+                request.user.email)
             return Response(
                 {"status": "Successfully added physiological data"},
                 status=status.HTTP_201_CREATED)
