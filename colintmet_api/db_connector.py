@@ -130,8 +130,9 @@ def insert_physiological_data(db_connection, physiological_data,
     physiological_data_collection = db_connection['physiological-data']
     users_collection = db_connection['users']
     try:
+        max_date = [datetime.datetime(1900, 1, 1)]
         physiological_data_collection.insert_one(
-            serialize_physiological_data(physiological_data, user_id))
+            serialize_physiological_data(physiological_data, user_id, max_date))
         updated = {"latest_physiological_upload": datetime.datetime.now()}
         users_collection.update_one(
         {'email': user_email}, {'$set': updated})
@@ -143,9 +144,26 @@ def insert_physiological_data(db_connection, physiological_data,
                 and error is:\n {error}""") from error
 
 
-def serialize_physiological_data(physiological_data, user_id):
-    return {'user': user_id, 'data': physiological_data}
+def serialize_physiological_data(physiological_data, user_id, max_date):
+    raw_data = physiological_data["data"]["formatted_result"]
 
+    formatted_data = [format_raw_data(data, max_date) for data in raw_data]
+
+    return {'user': user_id, 'data': formatted_data}
+
+def format_raw_data(raw_data, max_date):
+    date_to = datetime.datetime.strptime(raw_data['date_to'], '%Y-%m-%d %H:%M:%S.%f')
+    if (max_date[0] < date_to):
+        max_date[0] = date_to
+    return {
+                "unit": raw_data['unit'],
+                "value": raw_data['value'],
+                "date_from": datetime.datetime.strptime(raw_data['date_from'], '%Y-%m-%d %H:%M:%S.%f'),
+                "date_to": date_to,
+                "type":  raw_data['type'],
+                "device_id": raw_data['device_id'],
+                "platform": raw_data['platform']
+    }
 
 def get_profile_data(db_connection, user_email):
     profile_collection = db_connection['users']
