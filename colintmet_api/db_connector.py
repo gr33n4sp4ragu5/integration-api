@@ -36,13 +36,33 @@ def serialize_user(user):
 def insert_survey_response(db_connection, survey_response, user_id, user_email):
     surveys_response_collection = db_connection['surveys-response']
     users_collection = db_connection['users']
+    surveys_collection = db_connection['surveys']
+    groups_collection = db_connection['groups']
+
     try:
+        survey_identifier = survey_response['survey']['identifier']
+        survey_data = surveys_collection.find_one(
+            {"survey_identifier": survey_identifier})
+        project_id = survey_data["project_id"] if survey_data else ""
+        print(f"""project id is {project_id} """)
+
+        survey_id = survey_data["_id"] if survey_data else ""
+        print(f"""survey id is {survey_id} """)
+
+        group_data = groups_collection.find_one(
+            {"project_id": project_id, "members": user_id}
+        )
+        print(f"""group data is {group_data} """)
+        group_id = group_data["_id"] if group_data else ""
+        group_name = group_data["group_name"] if group_data else ""
         surveys_response_collection.insert_one(
-            serialize_survey_response(survey_response, user_id))
+            serialize_survey_response(
+                survey_response, user_id, group_id,
+                group_name, project_id, survey_id))
         users_collection.update(
             {'email': user_email},
             {'$push': {
-                'finished_surveys': survey_response['survey']['identifier']
+                'finished_surveys': survey_identifier
             }}
         )
     except Exception as error:
@@ -52,7 +72,9 @@ def insert_survey_response(db_connection, survey_response, user_id, user_email):
                             and error is:\n {error}""") from error
 
 
-def serialize_survey_response(survey_response, user_id):
+def serialize_survey_response(
+        survey_response, user_id, group_id,
+        group_name, project_id, generated_survey_id):
     raw_results = survey_response['survey']['results']
     question_ids = raw_results.keys()
     form_ids = list(filter(
@@ -69,6 +91,9 @@ def serialize_survey_response(survey_response, user_id):
 
     return {'id': survey_id, 'start_date_time': start_date_time,
             'end_date_time': end_date_time, 'user': user_id,
+            'group_id': group_id, 'group_name': group_name,
+            'survey_id': generated_survey_id,
+            'project_id': project_id,
             'forms': forms_results,
             'questions': question_results}
 
