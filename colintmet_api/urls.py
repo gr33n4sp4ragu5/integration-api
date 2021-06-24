@@ -26,4 +26,5 @@ urlpatterns = [
     path('physiological/data', views.PostPhysiologicalData.as_view()),
     path('profile/data', views.Profile.as_view()),
     path('profile/edit', views.ModifyProfile.as_view()),
+    path('surveys/finished', views.FinishedSurveys.as_view()),
 ]

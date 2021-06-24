@@ -33,11 +33,18 @@ def serialize_user(user):
             'surnames': user['surnames']}
 
 
-def insert_survey_response(db_connection, survey_response, user_id):
+def insert_survey_response(db_connection, survey_response, user_id, user_email):
     surveys_response_collection = db_connection['surveys-response']
+    users_collection = db_connection['users']
     try:
         surveys_response_collection.insert_one(
             serialize_survey_response(survey_response, user_id))
+        users_collection.update(
+            {'email': user_email},
+            {'$push': {
+                'finished_surveys': survey_response['survey']['identifier']
+            }}
+        )
     except Exception as error:
         logging.error("Couldn't update database. Error:\n%s", error)
         raise Exception(f"""Error trying to insert survey response
@@ -126,3 +133,20 @@ def modify_profile_data(db_connection, user_email, modified_data):
         {'email': user_email}, {'$set': modified_data})
 
     return result.modified_count == 1
+
+
+def get_finished_surveys(db_connection, user_email):
+    user_collection = db_connection['users']
+    user_data = user_collection.find({"email": user_email})
+    return serialize_finished_surveys_response(user_data[0])
+
+
+def serialize_finished_surveys_response(user_data):
+    logging.info(user_data)
+    logging.info("resultado")
+    resul = {'finished_surveys': user_data["finished_surveys"]
+                 if user_data.get("finished_surveys") else []}
+    logging.info(resul)
+    return {'finished_surveys': user_data["finished_surveys"]
+                if user_data.get("finished_surveys") else []}
+
