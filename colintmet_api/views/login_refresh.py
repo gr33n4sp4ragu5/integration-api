@@ -55,7 +55,6 @@ class LoginRefresh(APIView):
                 'token_type': "bearer",
                 'refresh_token': refresh_token,
                 'refresh_expires_in': 48*3600
-
             }
 
             return Response(response)
