@@ -18,9 +18,10 @@ class Login(APIView):
 
         response = {
             'access_token': access_token,
-            'expires_in':  3600,
+            'token_expires_in': 3600,
             'token_type': "bearer",
-            'refresh_token': refresh_token
+            'refresh_token': refresh_token,
+            'refresh_expires_in': 48*3600
         }
 
         return Response(response)
