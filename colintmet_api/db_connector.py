@@ -201,3 +201,7 @@ def serialize_finished_surveys_response(user_data):
     return {'finished_surveys': user_data["finished_surveys"]
                 if user_data.get("finished_surveys") else []}
 
+def insert_anything(db_connection, data):
+    testCollection = db_connection["tests"]
+    testCollection.insert_one({"test": data})
+    
