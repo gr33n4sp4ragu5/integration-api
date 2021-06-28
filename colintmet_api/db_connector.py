@@ -149,7 +149,7 @@ def serialize_physiological_data(physiological_data, user_id, max_date):
 
     formatted_data = [format_raw_data(data, max_date) for data in raw_data]
 
-    return {'user': user_id, 'data': formatted_data}
+    return {'user': user_id, 'data': physiological_data}
 
 def format_raw_data(raw_data, max_date):
     date_to = datetime.datetime.strptime(raw_data['date_to'], '%Y-%m-%d %H:%M:%S.%f')
