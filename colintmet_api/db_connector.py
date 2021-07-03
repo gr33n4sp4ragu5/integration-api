@@ -201,3 +201,14 @@ def serialize_finished_surveys_response(user_data):
     return {'finished_surveys': user_data["finished_surveys"]
                 if user_data.get("finished_surveys") else []}
 
+
+def get_physiological_data(db_connection):
+    physiological_data_collection = db_connection['physiological-data']
+    all_physiological_data = physiological_data_collection.find({}, {'_id': 0})
+    result = serialize_physiological_data(all_physiological_data)
+    return result
+
+
+def serialize_physiological_data(cursor):
+   # result = [document for document in cursor]
+    return list(cursor)
