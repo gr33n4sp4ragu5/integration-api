@@ -28,6 +28,8 @@ class GetPhysiologicalData(APIView):
                 raw_user_id = request.query_params.get('selected_user_id')
                 raw_start_date = request.query_params.get('start_date')
                 raw_end_date = request.query_params.get('end_date')
+                skip = request.query_params.get('skip')
+                limit = request.query_params.get('limit')
 
                 data_type = request.query_params.get('data_type')
                 selected_user_id = int(raw_user_id) if raw_user_id else None
@@ -40,6 +42,8 @@ class GetPhysiologicalData(APIView):
                     data_type, selected_user_id, start_date, end_date)
 
                 physiological_data = get_physiological_data(
+                    db_connection, filtering_params, skip=int(skip),
+                     limit=int(limit)) if skip is not None and limit is not None else get_physiological_data(
                     db_connection, filtering_params)
                 return Response(
                     {"data": physiological_data},

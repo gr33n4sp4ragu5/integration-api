@@ -209,10 +209,10 @@ def serialize_finished_surveys_response(user_data):
             if user_data.get("finished_surveys") else []}
 
 
-def get_physiological_data(db_connection, query_params):
+def get_physiological_data(db_connection, query_params, skip=0, limit=10000000):
     physiological_data_collection = db_connection['physiological-data']
     all_physiological_data = physiological_data_collection.find(
-        query_params, {'_id': 0})
+        query_params, {'_id': 0}).skip(skip).limit(limit)
     result = serialize_physiological_data_many(all_physiological_data)
     return result
 
