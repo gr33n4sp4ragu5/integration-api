@@ -202,13 +202,18 @@ def serialize_finished_surveys_response(user_data):
                 if user_data.get("finished_surveys") else []}
 
 
-def get_physiological_data(db_connection):
+def get_physiological_data(db_connection, query_params):
     physiological_data_collection = db_connection['physiological-data']
-    all_physiological_data = physiological_data_collection.find({}, {'_id': 0})
-    result = serialize_physiological_data(all_physiological_data)
+    all_physiological_data = physiological_data_collection.find(query_params, {'_id': 0})
+    result = serialize_physiological_data_many(all_physiological_data)
     return result
 
 
-def serialize_physiological_data(cursor):
+def serialize_physiological_data_many(cursor):
    # result = [document for document in cursor]
     return list(cursor)
+
+
+def format_query_params(query_params):
+    result = {key: query_params[key] for key in query_params.keys if query_params[key] != None}
+    return result
