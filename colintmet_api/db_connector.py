@@ -35,7 +35,8 @@ def serialize_user(user):
             'latest_physiological_upload': latest_physiological_upload}
 
 
-def insert_survey_response(db_connection, survey_response, user_id, user_email):
+def insert_survey_response(db_connection, survey_response, user_id,
+                           user_email):
     surveys_response_collection = db_connection['surveys-response']
     users_collection = db_connection['users']
     surveys_collection = db_connection['surveys']
@@ -132,10 +133,11 @@ def insert_physiological_data(db_connection, physiological_data,
     try:
         max_date = [datetime.datetime(1900, 1, 1)]
         physiological_data_collection.insert_one(
-            serialize_physiological_data(physiological_data, user_id, max_date))
+            serialize_physiological_data(
+                physiological_data, user_id, max_date))
         updated = {"latest_physiological_upload": max_date[0]}
         users_collection.update_one(
-        {'email': user_email}, {'$set': updated})
+            {'email': user_email}, {'$set': updated})
     except Exception as error:
         logging.error("Couldn't update database. Error:\n%s", error)
         raise Exception(
@@ -151,19 +153,23 @@ def serialize_physiological_data(physiological_data, user_id, max_date):
 
     return {'user': user_id, 'data': formatted_data}
 
+
 def format_raw_data(raw_data, max_date):
-    date_to = datetime.datetime.strptime(raw_data['date_to'], '%Y-%m-%d %H:%M:%S.%f')
+    date_to = datetime.datetime.strptime(
+        raw_data['date_to'], '%Y-%m-%d %H:%M:%S.%f')
     if (max_date[0] < date_to):
         max_date[0] = date_to
     return {
                 "unit": raw_data['unit'],
                 "value": raw_data['value'],
-                "date_from": datetime.datetime.strptime(raw_data['date_from'], '%Y-%m-%d %H:%M:%S.%f'),
+                "date_from": datetime.datetime.strptime(
+                    raw_data['date_from'], '%Y-%m-%d %H:%M:%S.%f'),
                 "date_to": date_to,
                 "type":  raw_data['type'],
                 "device_id": raw_data['device_id'],
                 "platform": raw_data['platform']
     }
+
 
 def get_profile_data(db_connection, user_email):
     profile_collection = db_connection['users']
@@ -175,7 +181,8 @@ def serialize_profile_response(profile):
     return {'email': profile['email'], 'name': profile['name'],
             'surnames': profile['surnames'],
             'birthdate': profile['birthdate'], 'gender': profile['gender'],
-            'latest_physiological_upload': profile['latest_physiological_upload']}
+            'latest_physiological_upload':
+            profile['latest_physiological_upload']}
 
 
 def modify_profile_data(db_connection, user_email, modified_data):
@@ -196,24 +203,25 @@ def serialize_finished_surveys_response(user_data):
     logging.info(user_data)
     logging.info("resultado")
     resul = {'finished_surveys': user_data["finished_surveys"]
-                 if user_data.get("finished_surveys") else []}
+             if user_data.get("finished_surveys") else []}
     logging.info(resul)
     return {'finished_surveys': user_data["finished_surveys"]
-                if user_data.get("finished_surveys") else []}
+            if user_data.get("finished_surveys") else []}
 
 
 def get_physiological_data(db_connection, query_params):
     physiological_data_collection = db_connection['physiological-data']
-    all_physiological_data = physiological_data_collection.find(query_params, {'_id': 0})
+    all_physiological_data = physiological_data_collection.find(
+        query_params, {'_id': 0})
     result = serialize_physiological_data_many(all_physiological_data)
     return result
 
 
 def serialize_physiological_data_many(cursor):
-   # result = [document for document in cursor]
     return list(cursor)
 
 
 def format_query_params(query_params):
-    result = {key: query_params[key] for key in query_params.keys if query_params[key] != None}
+    result = {key: query_params[key] for key in query_params.keys
+              if query_params[key] is not None}
     return result

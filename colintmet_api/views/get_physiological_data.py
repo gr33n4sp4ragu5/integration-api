@@ -31,24 +31,30 @@ class GetPhysiologicalData(APIView):
 
                 data_type = request.query_params.get('data_type')
                 selected_user_id = int(raw_user_id) if raw_user_id else None
-                start_date = datetime.datetime.strptime(raw_start_date, "%Y-%m-%dT%H:%M:%S") if raw_start_date else None
-                end_date = datetime.datetime.strptime(raw_end_date, "%Y-%m-%dT%H:%M:%S") if raw_end_date else None
+                start_date = datetime.datetime.strptime(
+                    raw_start_date, "%Y-%m-%dT%H:%M:%S") if raw_start_date else None
+                end_date = datetime.datetime.strptime(
+                    raw_end_date, "%Y-%m-%dT%H:%M:%S") if raw_end_date else None
 
-                filtering_params = get_filtering_params(data_type, selected_user_id, start_date, end_date)
+                filtering_params = get_filtering_params(
+                    data_type, selected_user_id, start_date, end_date)
 
-                physiological_data = get_physiological_data(db_connection, filtering_params)
+                physiological_data = get_physiological_data(
+                    db_connection, filtering_params)
                 return Response(
                     {"data": physiological_data},
                     status=status.HTTP_200_OK)
             except FilteringByDateException as error:
                 logging.error(
-                    "Error while retrieving physiological data. Error is \n %s", error)
+                    "Error while retrieving physiological data. Error is \n%s",
+                    error)
                 return Response(
                     {"status": error.message},
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             except Exception as error:
                 logging.error(
-                    "Error while retrieving physiological data. Error is \n %s", error)
+                    "Error while retrieving physiological data. Error is \n%s",
+                    error)
                 return Response(
                     {"status": "Something went wrong"},
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -61,20 +67,32 @@ class GetPhysiologicalData(APIView):
 
 def get_filtering_params(data_type, selected_user_id, start_date, end_date):
     if(data_type and selected_user_id and start_date and end_date):
-        return {"user": selected_user_id, "data": {'$elemMatch': {"date_from": {'$gte': start_date, '$lte': end_date}, "type": {'$eq': data_type}}}}
+        return {"user": selected_user_id,
+                "data": {'$elemMatch':
+                         {"date_from": {'$gte': start_date, '$lte': end_date},
+                          "type": {'$eq': data_type}}}}
     elif(data_type and start_date and end_date):
-        return {"data": {'$elemMatch': {"date_from": {'$gte': start_date, '$lte': end_date}, "type": {'$eq': data_type}}}}
+        return {"data": {'$elemMatch':
+                         {"date_from": {'$gte': start_date, '$lte': end_date},
+                          "type": {'$eq': data_type}}}}
     elif(data_type and selected_user_id):
-        return {"user": selected_user_id, "data": {'$elemMatch': {"type": {'$eq': data_type}}}}
+        return {"user": selected_user_id,
+                "data": {'$elemMatch': {"type": {'$eq': data_type}}}}
     elif(selected_user_id and start_date and end_date):
-        return {"user": selected_user_id, "data": {'$elemMatch': {"date_from": {'$gte': start_date, '$lte': end_date}}}}
+        return {"user": selected_user_id,
+                "data":
+                {'$elemMatch':
+                 {"date_from": {'$gte': start_date, '$lte': end_date}}}}
     elif(data_type):
         return {"data": {'$elemMatch': {"type": {'$eq': data_type}}}}
     elif(selected_user_id):
         return {"user": selected_user_id}
     elif(start_date and end_date):
-        return {"data": {'$elemMatch': {"date_from": {'$gte': start_date, '$lte': end_date}}}}
+        return {"data":
+                {'$elemMatch':
+                 {"date_from": {'$gte': start_date, '$lte': end_date}}}}
     elif(data_type is None and selected_user_id is None and start_date is None and end_date is None):
         return {}
     else:
-        raise FilteringByDateException("You must especify both start and end time if you want to filter by time")
+        raise FilteringByDateException(
+         "You must especify both start and end time if you want to filter by time")
