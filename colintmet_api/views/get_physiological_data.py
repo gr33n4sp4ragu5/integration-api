@@ -24,12 +24,12 @@ class GetPhysiologicalData(APIView):
             try:
                 db_connection = establish_db_connection(
                     DATABASE_URL, DATABASE_PORT, DATABASE_NAME)
-                """
-                data_type = request.query_params.get('data_type')
-                selected_user_id = request.query_params.get('selected_user_id')
-                start_date = datetime.datetime.strptime(request.query_params.get('start_date'), "YYYY-MM-DD HH:MM:SS")
-                end_date = datetime.datetime.strptime(request.query_params.get('end_date'), "YYYY-MM-DD HH:MM:SS")
 
+                data_type = request.query_params.get('data_type')
+                selected_user_id = int(request.query_params.get('selected_user_id'))
+                start_date = datetime.datetime.strptime(request.query_params.get('start_date'), "%Y-%m-%dT%H:%M:%S")
+                end_date = datetime.datetime.strptime(request.query_params.get('end_date'), "%Y-%m-%dT%H:%M:%S")
+                """
                 query_params = {
                     "data.type": {"$eq": data_type} if data_type,
                     "user": selected_user_id if selected_user_id,
@@ -37,7 +37,7 @@ class GetPhysiologicalData(APIView):
                     "end_date": strptime(request.query_params.get('end_date'), "YYYY-MM-DD HH:MM:SS")
                 }
                 """
-                test_params = {"user": 29, "data": {'$elemMatch': {"date_from": {'$gte': datetime.datetime.strptime('2021-05-21T00:41:24+0200', "%Y-%m-%dT%H:%M:%S%z"), '$lte': datetime.datetime.strptime('2023-01-04T16:41:24+0200', "%Y-%m-%dT%H:%M:%S%z")}, "type": {'$eq': "STEPS"}}}}
+                test_params = {"user": selected_user_id, "data": {'$elemMatch': {"date_from": {'$gte': start_date, '$lte': end_date}, "type": {'$eq': data_type}}}}
                 #test_params = {"user": 29, "data": {'$elemMatch': {"type": {'$eq': "STEPS"}}}}
 
                 physiological_data = get_physiological_data(db_connection, test_params)
