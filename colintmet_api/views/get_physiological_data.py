@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from rest_framework import status
 from colintmet_api.db_connector import (
     establish_db_connection, get_physiological_data)
+from colintmet_api.exceptions import FilteringByDateException
 from colintmet_api.authentication import ColintmetTokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 import logging
@@ -39,6 +40,12 @@ class GetPhysiologicalData(APIView):
                 return Response(
                     {"data": physiological_data},
                     status=status.HTTP_200_OK)
+            except FilteringByDateException as error:
+                logging.error(
+                    "Error while retrieving physiological data. Error is \n %s", error)
+                return Response(
+                    {"status": error.message},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             except Exception as error:
                 logging.error(
                     "Error while retrieving physiological data. Error is \n %s", error)
@@ -70,4 +77,4 @@ def get_filtering_params(data_type, selected_user_id, start_date, end_date):
     elif(data_type is None and selected_user_id is None and start_date is None and end_date is None):
         return {}
     else:
-        raise Exception("You must especify both start and end time if you want to filter by time")
+        raise FilteringByDateException("You must especify both start and end time if you want to filter by time")
