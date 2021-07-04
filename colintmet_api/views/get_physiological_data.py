@@ -24,23 +24,18 @@ class GetPhysiologicalData(APIView):
             try:
                 db_connection = establish_db_connection(
                     DATABASE_URL, DATABASE_PORT, DATABASE_NAME)
+                raw_user_id = request.query_params.get('selected_user_id')
+                raw_start_date = request.query_params.get('start_date')
+                raw_end_date = request.query_params.get('end_date')
 
                 data_type = request.query_params.get('data_type')
-                selected_user_id = int(request.query_params.get('selected_user_id'))
-                start_date = datetime.datetime.strptime(request.query_params.get('start_date'), "%Y-%m-%dT%H:%M:%S")
-                end_date = datetime.datetime.strptime(request.query_params.get('end_date'), "%Y-%m-%dT%H:%M:%S")
-                """
-                query_params = {
-                    "data.type": {"$eq": data_type} if data_type,
-                    "user": selected_user_id if selected_user_id,
-                    "data.date_from": ,
-                    "end_date": strptime(request.query_params.get('end_date'), "YYYY-MM-DD HH:MM:SS")
-                }
-                """
-                test_params = {"user": selected_user_id, "data": {'$elemMatch': {"date_from": {'$gte': start_date, '$lte': end_date}, "type": {'$eq': data_type}}}}
-                #test_params = {"user": 29, "data": {'$elemMatch': {"type": {'$eq': "STEPS"}}}}
+                selected_user_id = int(raw_user_id) if raw_user_id else None
+                start_date = datetime.datetime.strptime(raw_start_date, "%Y-%m-%dT%H:%M:%S") if raw_start_date else None
+                end_date = datetime.datetime.strptime(raw_end_date, "%Y-%m-%dT%H:%M:%S") if raw_end_date else None
 
-                physiological_data = get_physiological_data(db_connection, test_params)
+                filtering_params = get_filtering_params(data_type, selected_user_id, start_date, end_date)
+
+                physiological_data = get_physiological_data(db_connection, filtering_params)
                 return Response(
                     {"data": physiological_data},
                     status=status.HTTP_200_OK)
@@ -55,3 +50,24 @@ class GetPhysiologicalData(APIView):
                {"error": "Not Authorized, you are not an investigator"},
                status=status.HTTP_400_BAD_REQUEST
             )
+
+
+def get_filtering_params(data_type, selected_user_id, start_date, end_date):
+    if(data_type and selected_user_id and start_date and end_date):
+        return {"user": selected_user_id, "data": {'$elemMatch': {"date_from": {'$gte': start_date, '$lte': end_date}, "type": {'$eq': data_type}}}}
+    elif(data_type and start_date and end_date):
+        return {"data": {'$elemMatch': {"date_from": {'$gte': start_date, '$lte': end_date}, "type": {'$eq': data_type}}}}
+    elif(data_type and selected_user_id):
+        return {"user": selected_user_id, "data": {'$elemMatch': {"type": {'$eq': data_type}}}}
+    elif(selected_user_id and start_date and end_date):
+        return {"user": selected_user_id, "data": {'$elemMatch': {"date_from": {'$gte': start_date, '$lte': end_date}}}}
+    elif(data_type):
+        return {"data": {'$elemMatch': {"type": {'$eq': data_type}}}}
+    elif(selected_user_id):
+        return {"user": selected_user_id}
+    elif(start_date and end_date):
+        return {"data": {'$elemMatch': {"date_from": {'$gte': start_date, '$lte': end_date}}}}
+    elif(data_type is None and selected_user_id is None and start_date is None and end_date is None):
+        return {}
+    else:
+        raise Exception("You must especify both start and end time if you want to filter by time")
