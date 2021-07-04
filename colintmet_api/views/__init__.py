@@ -6,3 +6,4 @@ from .physiological_data import *
 from .profile import *
 from .modify_profile import *
 from .finished_surveys import *
+from .get_physiological_data import *
