@@ -64,8 +64,8 @@ class GetPhysiologicalData(APIView):
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
             return Response(
-               {"error": "Not Authorized, you are not an investigator"},
-               status=status.HTTP_400_BAD_REQUEST
+               {"error": "Not Authorized, you are not a researcher"},
+               status=status.HTTP_403_FORBIDDEN
             )
 
 
