@@ -29,11 +29,11 @@ class PostNewProject(APIView):
                 create_new_project(
                     db_connection, project_name, survey_ids)
                 return Response(
-                    {"status": "Successfully created new group"},
+                    {"status": "Successfully created new project"},
                     status=status.HTTP_201_CREATED)
             except Exception as error:
                 logging.error(
-                    "Error while creating group. Error is \n %s", error)
+                    "Error while creating project. Error is \n %s", error)
                 return Response(
                     {"status": "Something went wrong"},
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR)
