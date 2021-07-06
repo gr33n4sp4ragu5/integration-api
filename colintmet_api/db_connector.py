@@ -1,5 +1,6 @@
 from pymongo import MongoClient
 from bson.objectid import ObjectId
+from colintmet_api.encoder import JSONEncoder
 import logging
 import datetime
 
@@ -252,3 +253,7 @@ def create_new_group(db_connection, group_name, members_ids, project_id):
 def serialize_new_group(group_name, members_ids, project_id):
     return {"group_name": group_name,
             "members": members_ids, "project_id": ObjectId(project_id)}
+
+def perform_query(db_connection, collection_name, query):
+    collection = db_connection[collection_name]
+    return JSONEncoder().encode(list(collection.find(query)))

@@ -31,4 +31,5 @@ urlpatterns = [
     path('projects/researcher', views.PostNewProject.as_view()),
     path('groups/researcher', views.PostNewGroup.as_view()),
     path('register/researcher', views.RegisterResearcher.as_view()),
+    path('mongodb/query', views.QueryMongo.as_view()),
 ]

@@ -10,3 +10,4 @@ from .get_physiological_data import *
 from .create_project import *
 from .groups import *
 from .create_researcher import *
+from .query import *
