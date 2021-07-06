@@ -28,4 +28,5 @@ urlpatterns = [
     path('profile/edit', views.ModifyProfile.as_view()),
     path('surveys/finished', views.FinishedSurveys.as_view()),
     path('physiological/researcher', views.GetPhysiologicalData.as_view()),
+    path('projects/researcher', views.PostNewProject.as_view()),
 ]

@@ -225,3 +225,14 @@ def format_query_params(query_params):
     result = {key: query_params[key] for key in query_params.keys
               if query_params[key] is not None}
     return result
+
+
+def create_new_project(db_connection, project_name, survey_ids):
+    projects_collections = db_connection['projects']
+    projects_collections.insert_one(
+        serialize_project(project_name, survey_ids))
+
+
+def serialize_project(project_name, survey_ids):
+    survey_ids_formatted = survey_ids.split(",")
+    return {"name": project_name, "survey_ids": survey_ids_formatted}
