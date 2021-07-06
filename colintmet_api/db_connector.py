@@ -1,4 +1,5 @@
 from pymongo import MongoClient
+from bson.objectid import ObjectId
 import logging
 import datetime
 
@@ -236,3 +237,18 @@ def create_new_project(db_connection, project_name, survey_ids):
 def serialize_project(project_name, survey_ids):
     survey_ids_formatted = survey_ids.split(",")
     return {"name": project_name, "survey_ids": survey_ids_formatted}
+
+
+def create_new_group(db_connection, group_name, members_ids, project_id):
+    groups_collection = db_connection['groups']
+    inserted_group = groups_collection.insert_one(
+        serialize_new_group(group_name, members_ids, project_id))
+    project_collection = db_connection['projects']
+    project_collection.update(
+        {"_id": ObjectId(project_id)},
+        {"$push": {"group_ids": inserted_group.inserted_id}})
+
+
+def serialize_new_group(group_name, members_ids, project_id):
+    return {"group_name": group_name,
+            "members": members_ids, "project_id": ObjectId(project_id)}
