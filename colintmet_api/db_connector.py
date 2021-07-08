@@ -255,6 +255,7 @@ def serialize_new_group(group_name, members_ids, project_id):
     return {"group_name": group_name,
             "members": members_ids, "project_id": ObjectId(project_id)}
 
+
 def perform_query(db_connection, collection_name, query):
     collection = db_connection[collection_name]
     return JSONEncoder().encode(list(collection.find(query)))
@@ -264,31 +265,22 @@ def get_activated_surveys(db_connection, user_id):
     groups_collection = db_connection['groups']
     projects_collection = db_connection['projects']
 
-    print(user_id)
-
     project_query = groups_collection.find(
         {'members': user_id}, {'project_id': 1, '_id': 0})
-    # I have a cursor of Objects of the format "project_id": ObjectId("id")
 
-    myList = []
-    for project in project_query:
-        print(type(project))
-        myList.append(project['project_id'])
-    print("Printing my list")
-    print(JSONEncoder().encode(myList))
-
-    # I have a list of ObjectIds
+    project_ids = [project['project_id'] for project in project_query]
+    print(f"Printing the list of project ids associated to the user {user_id}")
+    print(JSONEncoder().encode(project_ids))
 
     surveys_activated = projects_collection.find(
-        {'_id': {'$in': myList}}, {'survey_ids': 1, '_id': 0})
-    print("Lo que devuelve la query a projectos")
+        {'_id': {'$in': project_ids}}, {'survey_ids': 1, '_id': 0})
 
-
-    return {'activated_surveys': format_activated_surveys_response(surveys_activated)}
+    return {'activated_surveys': format_activated_surveys_response(
+        surveys_activated)}
 
 
 def format_activated_surveys_response(surveys_activated):
     list_of_lists = [survey['survey_ids'] for survey in surveys_activated]
-    flattened_list =  [y for x in list_of_lists for y in x]
+    flattened_list = [y for x in list_of_lists for y in x]
     list_without_duplicates = list(set(flattened_list))
     return list_without_duplicates
