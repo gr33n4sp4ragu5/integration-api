@@ -231,8 +231,9 @@ def format_query_params(query_params):
 
 def create_new_project(db_connection, project_name, survey_ids):
     projects_collections = db_connection['projects']
-    projects_collections.insert_one(
+    insertion_result = projects_collections.insert_one(
         serialize_project(project_name, survey_ids))
+    return JSONEncoder().encode(insertion_result.inserted_id)
 
 
 def serialize_project(project_name, survey_ids):
