@@ -26,10 +26,11 @@ class PostNewProject(APIView):
                 survey_ids = data["survey_ids"]
                 db_connection = establish_db_connection(
                     DATABASE_URL, DATABASE_PORT, DATABASE_NAME)
-                create_new_project(
+                project_info = create_new_project(
                     db_connection, project_name, survey_ids)
                 return Response(
-                    {"status": "Successfully created new project"},
+                    {"status": "Successfully created new project",
+                    "project_info": project_info},
                     status=status.HTTP_201_CREATED)
             except Exception as error:
                 logging.error(

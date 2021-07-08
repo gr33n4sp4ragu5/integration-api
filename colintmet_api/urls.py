@@ -32,4 +32,5 @@ urlpatterns = [
     path('groups/researcher', views.PostNewGroup.as_view()),
     path('register/researcher', views.RegisterResearcher.as_view()),
     path('mongodb/query', views.QueryMongo.as_view()),
+    path('surveys/activated', views.ActivatedSurveys.as_view()),
 ]

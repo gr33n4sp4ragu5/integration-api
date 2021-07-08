@@ -231,8 +231,9 @@ def format_query_params(query_params):
 
 def create_new_project(db_connection, project_name, survey_ids):
     projects_collections = db_connection['projects']
-    projects_collections.insert_one(
+    insertion_result = projects_collections.insert_one(
         serialize_project(project_name, survey_ids))
+    return JSONEncoder().encode(insertion_result.inserted_id)
 
 
 def serialize_project(project_name, survey_ids):
@@ -254,6 +255,32 @@ def serialize_new_group(group_name, members_ids, project_id):
     return {"group_name": group_name,
             "members": members_ids, "project_id": ObjectId(project_id)}
 
+
 def perform_query(db_connection, collection_name, query):
     collection = db_connection[collection_name]
     return JSONEncoder().encode(list(collection.find(query)))
+
+
+def get_activated_surveys(db_connection, user_id):
+    groups_collection = db_connection['groups']
+    projects_collection = db_connection['projects']
+
+    project_query = groups_collection.find(
+        {'members': user_id}, {'project_id': 1, '_id': 0})
+
+    project_ids = [project['project_id'] for project in project_query]
+    print(f"Printing the list of project ids associated to the user {user_id}")
+    print(JSONEncoder().encode(project_ids))
+
+    surveys_activated = projects_collection.find(
+        {'_id': {'$in': project_ids}}, {'survey_ids': 1, '_id': 0})
+
+    return {'activated_surveys': format_activated_surveys_response(
+        surveys_activated)}
+
+
+def format_activated_surveys_response(surveys_activated):
+    list_of_lists = [survey['survey_ids'] for survey in surveys_activated]
+    flattened_list = [y for x in list_of_lists for y in x]
+    list_without_duplicates = list(set(flattened_list))
+    return list_without_duplicates
