@@ -6,6 +6,8 @@ RUN apt-get update && \
                     python3-dev \
                     python3-pip
 
+RUN ["apt-get", "install", "-y", "vim"]
+
 COPY . app
 
 RUN pip3 install uwsgi && \
