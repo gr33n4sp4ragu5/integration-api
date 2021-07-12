@@ -16,21 +16,22 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from . import views
+baseUrl = 'api/v1/colintmet'
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('login/register', views.Register.as_view()),
-    path('login/', views.Login.as_view()),
-    path('login/refresh', views.LoginRefresh.as_view()),
-    path('surveys/answer', views.PostSurveyAnswer.as_view()),
-    path('physiological/data', views.PostPhysiologicalData.as_view()),
-    path('profile/data', views.Profile.as_view()),
-    path('profile/edit', views.ModifyProfile.as_view()),
-    path('surveys/finished', views.FinishedSurveys.as_view()),
-    path('physiological/researcher', views.GetPhysiologicalData.as_view()),
-    path('projects/researcher', views.PostNewProject.as_view()),
-    path('groups/researcher', views.PostNewGroup.as_view()),
-    path('register/researcher', views.RegisterResearcher.as_view()),
-    path('mongodb/query', views.QueryMongo.as_view()),
-    path('surveys/activated', views.ActivatedSurveys.as_view()),
+    path(baseUrl + 'admin/', admin.site.urls),
+    path(baseUrl + 'login/register', views.Register.as_view()),
+    path(baseUrl + 'login/', views.Login.as_view()),
+    path(baseUrl + 'login/refresh', views.LoginRefresh.as_view()),
+    path(baseUrl + 'surveys/answer', views.PostSurveyAnswer.as_view()),
+    path(baseUrl + 'physiological/data', views.PostPhysiologicalData.as_view()),
+    path(baseUrl + 'profile/data', views.Profile.as_view()),
+    path(baseUrl + 'profile/edit', views.ModifyProfile.as_view()),
+    path(baseUrl + 'surveys/finished', views.FinishedSurveys.as_view()),
+    path(baseUrl + 'physiological/researcher', views.GetPhysiologicalData.as_view()),
+    path(baseUrl + 'projects/researcher', views.PostNewProject.as_view()),
+    path(baseUrl + 'groups/researcher', views.PostNewGroup.as_view()),
+    path(baseUrl + 'register/researcher', views.RegisterResearcher.as_view()),
+    path(baseUrl + 'mongodb/query', views.QueryMongo.as_view()),
+    path(baseUrl + 'surveys/activated', views.ActivatedSurveys.as_view()),
 ]
