@@ -11,7 +11,5 @@ COPY . app
 RUN pip3 install uwsgi && \
     pip3 install -r app/requirements.txt
 
-EXPOSE 8000
-
 CMD ["uwsgi", "--ini", "app/uwsgi.ini"]
 
